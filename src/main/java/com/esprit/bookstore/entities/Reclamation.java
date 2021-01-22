@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,10 +16,21 @@ import javax.persistence.TemporalType;
 public class Reclamation {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="reclamation_id")
 	private int id; 
 	
+	
+
+
+
+	
+
+
+	public Reclamation() {
+		super();
+	}
+
 	private String titre; 
 	private String texte; 
     
@@ -29,5 +41,45 @@ public class Reclamation {
 	@ManyToOne
     @JoinColumn(name="user_reclamation_id")
 	private User userReclamation;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getTitre() {
+		return titre;
+	}
+
+	public void setTitre(String titre) {
+		this.titre = titre;
+	}
+
+	public String getTexte() {
+		return texte;
+	}
+
+	public void setTexte(String texte) {
+		this.texte = texte;
+	}
+
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
+	}
+
+	public User getUserReclamation() {
+		return userReclamation;
+	}
+
+	public void setUserReclamation(User userReclamation) {
+		this.userReclamation = userReclamation;
+	}
 
 }
