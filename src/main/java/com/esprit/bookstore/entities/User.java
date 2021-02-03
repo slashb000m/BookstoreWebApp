@@ -22,34 +22,14 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_user")
 	private int idUser; 
-	private String nom;
+	@Column(unique= true)
+	private String username;
 	private String prenom;
+	private String nom;
+	@Column(unique=true)
 	private String email ; 
 	private String password;
-	
-	@Column(name="date_inscription")
-	@Temporal(TemporalType.DATE)	
-    private java.util.Date dateInscription; 
-	
-	public User(String nom, String prenom) {
-		super();
-		this.nom = nom;
-		this.prenom = prenom;
-	}
-
-	public User(int idUser, String nom, String prenom, String email, String password, java.sql.Date dateInscription,
-			String auteurPrefere, String genrePrefere, Statut statut) {
-		super();
-		this.idUser = idUser;
-		this.nom = nom;
-		this.prenom = prenom;
-		this.email = email;
-		this.password = password;
-		this.dateInscription = dateInscription;
-		this.auteurPrefere = auteurPrefere;
-		this.genrePrefere = genrePrefere;
-		this.statut = statut;
-	}
+	private String role;
 
 	@Column(name="auteur_prefere")
 	private String auteurPrefere; 
@@ -62,9 +42,96 @@ public class User {
 	
 	
 	
+	public User(String username, String nom, String email, String password,String role) {
+		super();
+		this.username = username;
+		this.nom = nom;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+	}
+
+
+
+	public String getNom() {
+		return nom;
+	}
+
+
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+
+
+	public User(String username, String prenom, String nom, String email, String password, String role,
+			Date dateInscription, String auteurPrefere, String genrePrefere, Statut statut) {
+		super();
+		this.username = username;
+		this.prenom = prenom;
+		this.nom = nom;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.dateInscription = dateInscription;
+		this.auteurPrefere = auteurPrefere;
+		this.genrePrefere = genrePrefere;
+		this.statut = statut;
+	}
+
+	
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Column(name="date_inscription")
+	@Temporal(TemporalType.DATE)	
+    private java.util.Date dateInscription; 
+	
+	public User(String nom, String prenom) {
+		super();
+		this.username = nom;
+		this.prenom = prenom;
+	}
+
+	public User(String username, String prenom, String email, String password, String role, Date dateInscription,
+			String auteurPrefere, String genrePrefere, Statut statut) {
+		super();
+		this.username = username;
+		this.prenom = prenom;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.dateInscription = dateInscription;
+		this.auteurPrefere = auteurPrefere;
+		this.genrePrefere = genrePrefere;
+		this.statut = statut;
+	}
+
+	public User(int idUser, String nom, String prenom, String email, String password, java.sql.Date dateInscription,
+			String auteurPrefere, String genrePrefere, Statut statut) {
+		super();
+		this.idUser = idUser;
+		this.username = nom;
+		this.prenom = prenom;
+		this.email = email;
+		this.password = password;
+		this.dateInscription = dateInscription;
+		this.auteurPrefere = auteurPrefere;
+		this.genrePrefere = genrePrefere;
+		this.statut = statut;
+	}
+
+	
+	
 	
 	public User() {
-		super();
 	}
 
 	/*@ManyToMany
@@ -89,12 +156,14 @@ public class User {
 		this.idUser = idUser;
 	}
 
-	public String getNom() {
-		return nom;
+	
+
+	public String getUsername() {
+		return username;
 	}
 
-	public void setNom(String nom) {
-		this.nom = nom;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPrenom() {
@@ -181,7 +250,7 @@ public class User {
 			String auteurPrefere, String genrePrefere, Statut statut) {
 		super();
 		this.idUser = idUser;
-		this.nom = nom;
+		this.username = nom;
 		this.prenom = prenom;
 		this.email = email;
 		this.password = password;
@@ -194,7 +263,7 @@ public class User {
 	@Override
 	public String toString() {
 		return "[User [idUser =" + idUser +"\n" + 
-	", nom =" + nom +"\n" +
+	", nom =" + username +"\n" +
 	", prenom =" + prenom +"\n" + 
 	", email =" + email +"\n"+
 	", password = password  " +"\n"
@@ -206,6 +275,9 @@ public class User {
 				+ ", listeAchats =" + listeAchats +"\n"+ 
 				", listeReclamation =" + listeReclamation + "]";
 	}
+
+
+
 
 	
 	
