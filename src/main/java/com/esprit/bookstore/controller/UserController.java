@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.esprit.bookstore.entities.Livre;
 import com.esprit.bookstore.entities.User;
+import com.esprit.bookstore.repositories.LivreRepository;
 import com.esprit.bookstore.repositories.UserRepository;
+import com.esprit.bookstore.services.EmailService;
 import com.esprit.bookstore.services.UserService;
 import com.esprit.bookstore.services.UserServiceImpl;
 import com.esprit.bookstore.services.achatService;
@@ -32,9 +34,13 @@ public class UserController {
 	UserService u;
 	@Autowired
 	UserRepository ur;
-	
+	@Autowired 
+	LivreRepository lr;
 	@Autowired
 	achatService as;
+@Autowired 
+EmailService es;
+
 
 	
 	@RequestMapping(value ="/addSouhait/{idLivre}/{idUser}" , produces = "application/json")
@@ -77,11 +83,32 @@ public class UserController {
 	public String ajouterreduc(@PathVariable("percent") Integer percent, @PathVariable("idLivre") Integer idLivre)
 	{
 		
-	u.reductionAccord(idLivre, percent)	;
-	
-	return "reduction acordée";
+	float nprice = u.reductionAccord(idLivre, percent)	;
+	List<User> anotifPargenreAuteur = u.utilisteurspargenreetauteur(idLivre);
+	List<User> anotifierparsouhait = u.utilisateursparSouhait(idLivre);
+	String nom_du_livre= lr.findById(idLivre).get().getTitre();
+	for (User user : anotifierparsouhait) {
+		es.sendSimpleMessage(user.getEmail(), "reduction au livre qui fait partie de votre souhait", " le livre "+ nom_du_livre+"  fait partie de votre wishlist et est maintenant sous reduction son nouveau prix est : "+ nprice);	
+	}
+	 for (User user : anotifPargenreAuteur) {
+		 es.sendSimpleMessage(user.getEmail(), "reduction d'un livre de votre genre et auteur preférés ", " le livre "+ nom_du_livre+"  fait partie de votre wishlist et est maintenant sous reduction son nouveau prix est : "+ nprice);
+		
 	}
 	
-
 	
+	return "reduction acordée , verifiez votre mail";
+	}
+	
+//	@RequestMapping(value = "/getUsers/{idLivre}", produces = "application/json")
+//	public @ResponseBody List<User> findUserByWish(@PathVariable("idLivre") Integer idLivre){
+//   
+//	return	u.utilisateursparSouhait(idLivre);
+//		
+// 
+//}
+//	@RequestMapping(value = "/getUsersbytype/{idLivre}", produces = "application/json")
+//	public @ResponseBody List<User> findUserByauthorandtype(@PathVariable("idLivre") Integer idLivre){
+//   
+//	return	u.utilisteurspargenreetauteur(idLivre);
+//	}
 }

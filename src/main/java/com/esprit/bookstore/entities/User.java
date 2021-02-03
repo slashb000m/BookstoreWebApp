@@ -68,14 +68,14 @@ public class User implements Serializable {
 	
 
 	
+//
+//	public Set<Livre> getLivreSouhaite() {
+//		return livreSouhaite;
+//	}
 
-	public Set<Livre> getLivreSouhaite() {
-		return livreSouhaite;
-	}
-
-	public void setLivreSouhaite(Set<Livre> livreSouhaite) {
-		this.livreSouhaite = livreSouhaite;
-	}
+//	public void setLivreSouhaite(Set<Livre> livreSouhaite) {
+//		this.livreSouhaite = livreSouhaite;
+//	}
 
 
 
@@ -172,9 +172,9 @@ public class User implements Serializable {
 		this.listeAvis = listeAvis;
 	}
 
-	public Set<Achat> getListeAchats() {
-		return listeAchats;
-	}
+//	public Set<Achat> getListeAchats() {
+//		return listeAchats;
+//	}
 
 	public void setListeAchats(Set<Achat> listeAchats) {
 		this.listeAchats = listeAchats;

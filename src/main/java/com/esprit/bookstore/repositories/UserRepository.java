@@ -38,8 +38,18 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	public List<Integer> listerSouhaits
 	(@Param("uId") int uId);
 
+	@Modifying
+	@Transactional
+	@Query(value="SELECT * from user u where genre_prefere =(:genre) or auteur_prefere = (:aut)  ",nativeQuery=true)
+	public List<User> listerUsersPargenreAuteur
+	(@Param("genre") String genre , @Param ("aut") String aut);
 
-
+	
+	@Modifying
+	@Transactional
+	@Query(value="SELECT user_souhait_id_user FROM  livre_user_souhait WHERE livre_souhaite_id_livre =(:lId) ",nativeQuery=true)
+	public List<Integer> listerUsersParSouhait
+	(@Param("lId") int lId);
 //
 //	@Modifying
 //	@Transactional

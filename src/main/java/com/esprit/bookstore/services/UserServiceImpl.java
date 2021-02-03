@@ -1,5 +1,8 @@
 package com.esprit.bookstore.services;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,14 +29,14 @@ public class UserServiceImpl  implements UserService{
 	@Override
 	public void ajouterSouhait(int id_livre, int id_user) {
 		
-		 urepo.findById(id_user).get().getLivreSouhaite().add(livrepo.findById(id_livre).get());
+		// urepo.findById(id_user).get().getLivreSouhaite().add(livrepo.findById(id_livre).get());
 		 
 		urepo.addsouhait(id_livre, id_user); 
 		
 	}
 	@Override
 	public void supprimerSouhait(int id_livre , int id_user) {
-		urepo.findById(id_user).get().getLivreSouhaite().remove(livrepo.findById(id_livre).get());
+	//	urepo.findById(id_user).get().getLivreSouhaite().remove(livrepo.findById(id_livre).get());
 		urepo.DeletSouhait(id_livre);
 		
 	}
@@ -59,8 +62,25 @@ public class UserServiceImpl  implements UserService{
 		float newprice = oldprice -((oldprice*percentage)/100);
 		livrepo.findById(id_livre).get().setPrix(newprice);
 		livrepo.save(livrepo.findById(id_livre).get());
-		return newprice ;
+		return newprice;
 			}
+	@Override
+	public List<User> utilisateursparSouhait(int id_livre) {
+		List<User> listUsers = new ArrayList<>();
+		List <Integer>l = (ArrayList<Integer>)urepo.listerUsersParSouhait(id_livre);
+		
+		for (int i=0 ; i< l.size(); i++)
+		{ int id = l.get(i);
+		listUsers.add( urepo.findById(id).get());
+		}
+		return listUsers;
+	}
+	@Override
+	public List<User> utilisteurspargenreetauteur(int id_livre) {
+		Livre l = livrepo.findById(id_livre).get();
+		
+		return urepo.listerUsersPargenreAuteur(l.getCategorie(), l.getAuteur());
+	}
 
 	
 	
