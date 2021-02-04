@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.jws.soap.InitParam;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,10 +41,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 ////   
 //	@Modifying
 //	@Transactional
-//	@Query(value="select * from user u where u.username = (:username)", nativeQuery=true)
+//
+	
+	
 //	public User findbyUsername(@Param("username") String username);
 //	public ArrayList<User> getUsersByRole(String role);
 	public Optional<User> getUserByUsername(String userName);
+	
     public List<User> getUserByRole(String role);
 
 }

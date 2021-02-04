@@ -1,25 +1,50 @@
 package com.esprit.bookstore.services;
 
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 //import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import com.esprit.bookstore.entities.Statut;
 import com.esprit.bookstore.entities.User;
 import com.esprit.bookstore.repositories.UserRepository;
 import com.esprit.bookstore.security.SecurityConfig;
+
 import com.esprit.bookstore.entities.MyUserDetails;
 @Service
-public class UserServiceImpl implements UserService,UserDetailsService {
+public class UserServiceImpl implements UserService,UserDetailsService{
+//@Override
+//	public ResponseEntity login(MyUserDetails loginRequest) {
+//	  Authentication authenticate = authenticationManager.authenticate(
+//              new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+//              loginRequest.getPassword()));
+//      SecurityContextHolder
+//              .getContext()
+//              .setAuthentication(authenticate);
+//      System.err.println("login request: "+loginRequest);
+//      System.err.println("authenticate: "+authenticate);
+//      return new ResponseEntity(loginRequest.getUsername(), HttpStatus.OK);
+//	}
+
+
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -29,7 +54,7 @@ public class UserServiceImpl implements UserService,UserDetailsService {
     
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
+		
 		 Optional<User> user= userRepository.getUserByUsername(username);
 		 user.orElseThrow(()-> new UsernameNotFoundException("No user with the username "+username));
 
@@ -39,8 +64,7 @@ public class UserServiceImpl implements UserService,UserDetailsService {
 	@Override
 	public User getUserById(int id) {
 		  return userRepository.findById(id).orElse(null);
-//				  orElseThrow(() -> new ResourceNotFoundException("No " +
-//	                "user found with the ID "+ id));
+				
 	}
 
 	@Override
@@ -50,9 +74,11 @@ public class UserServiceImpl implements UserService,UserDetailsService {
 
 	@Override
 	public User addUser(User user) throws Exception {
+		long millis=System.currentTimeMillis();
 		   if (userRepository.getUserByUsername(user.getUsername()).isPresent()) throw new Exception("This " +
 	                "username " +
 	                "already exist");
+		   user.setDateInscription(new java.sql.Date(millis));
 	        user.setPassword(securityConfig.passwordEncoder().encode(user.getPassword()));
 	        user.setRole("ROLE_USER");
 		return userRepository.save(user);
@@ -60,10 +86,12 @@ public class UserServiceImpl implements UserService,UserDetailsService {
 
 	@Override
 	public User addAdmin(User user)throws Exception {
+		long millis=System.currentTimeMillis();
 		  if (userRepository.getUserByUsername(user.getUsername()).isPresent()) throw new Exception("This  admin " +
 	                "already exist");
 	        user.setPassword(securityConfig.passwordEncoder().encode(user.getPassword()));
-	        user.setRole("ROLE_ADMIN");		
+	        user.setRole("ROLE_ADMIN");	
+	        user.setDateInscription(new java.sql.Date(millis));
 	        return userRepository.save(user);
 	}
 
@@ -74,13 +102,52 @@ public class UserServiceImpl implements UserService,UserDetailsService {
 //	}
 
 	@Override
-	public User updateUserName(int userId, User user) {
-		User u = getUserById(userId);
-        u.setUsername(user.getUsername());
-        return userRepository.save(u);
+	public User updateProfile(int id, User user) {
+		User currentUser = userRepository.findById(id).get();
+		currentUser.setUsername(user.getUsername());
+        currentUser.setAuteurPrefere(user.getAuteurPrefere());
+        currentUser.setEmail(user.getEmail());
+        currentUser.setGenrePrefere(user.getGenrePrefere());
+        currentUser.setStatut(user.getStatut());
+        return userRepository.save(currentUser);
 	}
-
 	
+	@Override
+	public User afficherDonnerPersonnelle(String userName) {
+		
+		User user = userRepository.getUserByUsername(userName).get();
+			
+	return 	user;	
+	}
+	@Override
+	public boolean signIn(String username,String password) {
+		boolean exit = false;
+		User user = userRepository.getUserByUsername(username).get();
+		
+//	User user = userRepository.getUserByUsername(userName).orElse(null);
+//			//orElseThrow(()-> new UsernameNotFoundException("No user with the username "+userName));
+		System.out.println(securityConfig.passwordEncoder().encode(user.getPassword()));
+		System.out.println(securityConfig.passwordEncoder().hashCode());
+	if(user.getUsername().equals(username) &(securityConfig.passwordEncoder().matches(password, user.getPassword()))){
+		
+		exit = true;
+	}else{
+		exit= false;
+	}
+	return exit;
+	}
+//		 if (!(userRepository.getUserByUsername(userName).isPresent())) {
+//			return null;
+//		 }
+//		 else{
+//	user	 = userRepository.getUserByUsername(userName).get();
+//		 }
+//	if (user.getPassword().equals(securityConfig.passwordEncoder().encode(password))){
+//		return user;
+//	}
+//	else return user; 
+	
+	 
 	
 	
 // modifiying how the value of role should be recieved to do the authorization process
@@ -147,12 +214,7 @@ public class UserServiceImpl implements UserService,UserDetailsService {
 ////		 }
 ////	}
 ////
-//	@Override
-//	public String afficherDonnerPersonnelle(int id) {
-//		
-//		User e = userRepository.findById(id).get();
-//	return e.toString()	;	
-//	}
+//	
 ////
 //	@Override
 //	public User getUser(int idUser) {

@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,16 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import com.esprit.DTO.SignUpRequestDTO;
+import com.esprit.bookstore.entities.MyUserDetails;
 import com.esprit.bookstore.entities.User;
+import com.esprit.bookstore.repositories.UserRepository;
 //import com.esprit.bookstore.services.UserService;
 import com.esprit.bookstore.services.UserService;
+import com.esprit.bookstore.services.UserServiceImpl;
+
 
 @Controller
 @RestController
 public class UserController {
 	 @Autowired
 	 UserService userService;
-	
+	 
 	 @GetMapping("/admin/users")
 	    public ResponseEntity<List<User>> getAllUsers() {
 	        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
@@ -50,6 +56,24 @@ public class UserController {
 	            System.err.println(result.getAllErrors());
 	        return new ResponseEntity<>(userService.addAdmin(user), HttpStatus.CREATED);
 	    }
+	   @PutMapping("/user/updateUser/{id}")
+	   public ResponseEntity<User> updateUser(@PathVariable int id,@RequestBody User user, BindingResult result){
+		   if (result.hasErrors())
+	            System.err.println(result.getAllErrors());
+	        return new ResponseEntity<User>(userService.updateProfile(id, user), HttpStatus.OK);
+	   }
+	   @GetMapping("/user/signIn/{username}/{password}")
+	  
+	   public boolean checkCredentials(@PathVariable String username ,@PathVariable String password){
+		
+	      
+		   return    userService.signIn(username, password);
+	    
+	   }
+//	   @PostMapping("/user/login")
+//	    public UserDetails signIn(@RequestBody String username){
+//	       return userService.loadUserByUsername(username);
+//	    }
 //		@Autowired
 //		UserServiceImpl userService;
 //	

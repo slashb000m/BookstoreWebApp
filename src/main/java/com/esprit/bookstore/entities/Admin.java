@@ -13,7 +13,6 @@ public class Admin {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 @Column(name="id_admin")
 private int id;
-
 private String nom; 
 private String prenom; 
 private String email; 
