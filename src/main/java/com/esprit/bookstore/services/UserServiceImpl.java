@@ -2,13 +2,18 @@ package com.esprit.bookstore.services;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -82,7 +87,30 @@ public class UserServiceImpl  implements UserService{
 		return urepo.listerUsersPargenreAuteur(l.getCategorie(), l.getAuteur());
 	}
 
+	public InputStreamResource DownloadBook (HttpServletResponse response , int idLivre) throws IOException {
+		response.setContentType("application/pdf");
+		response.setHeader("Content-Disposition", "attachment; filename=\"test.pdf\"");
+		InputStreamResource resource = new InputStreamResource(new FileInputStream(livrepo.findById(idLivre).get().getUrl()));
+		return resource;
+	}
 	
 	
-	
+//	 void telecharger_pdf_gratuit(int idLivre) {
+//	        FileChooser fc = new FileChooser();
+//	        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PDF files","*.pdf"));
+//	        File selectedFile =fc.showSaveDialog(null);
+//	        
+//	try (BufferedInputStream in = new BufferedInputStream(new URL("https://www.win.tue.nl/~marko/latex/exercises/day2/snowwhite2.pdf").openStream());
+//	  FileOutputStream fileOutputStream = new FileOutputStream(selectedFile)) {
+//	    byte dataBuffer[] = new byte[1024];
+//	    int bytesRead;
+//	    while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+//	        fileOutputStream.write(dataBuffer, 0, bytesRead);
+//	    }
+//	} catch (IOException e) {
+//	    e.getMessage();
+//	    // handle exception
+//	}
+	        
+	    
 }

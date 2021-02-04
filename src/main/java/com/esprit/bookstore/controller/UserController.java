@@ -2,17 +2,34 @@ package com.esprit.bookstore.controller;
 
 
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.aspectj.weaver.patterns.IVerificationRequired;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.esprit.bookstore.entities.Livre;
 import com.esprit.bookstore.entities.User;
@@ -22,6 +39,9 @@ import com.esprit.bookstore.services.EmailService;
 import com.esprit.bookstore.services.UserService;
 import com.esprit.bookstore.services.UserServiceImpl;
 import com.esprit.bookstore.services.achatService;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
 
 
 
@@ -29,7 +49,8 @@ import com.esprit.bookstore.services.achatService;
 
 @RestController
 public class UserController {
-	
+	@Autowired
+	HttpServletResponse response;
 	@Autowired
 	UserService u;
 	@Autowired
@@ -70,15 +91,19 @@ EmailService es;
 }
 	
 	@RequestMapping(value = "/ajouterAchat/{idUser}/{idLivre}",produces = "application/json")
-	public String ajouterAchat(@PathVariable("idUser") Integer idUser, @PathVariable("idLivre") Integer idLivre)
+	public String ajouterAchat(@PathVariable("idUser") Integer idUser, @PathVariable("idLivre") Integer idLivre) throws IOException
 	{
 		as.acheterLivre(idUser, idLivre);
+		if (lr.findById(idLivre).get().getPrix()==0)
+		{
+			//u.DownloadBook(response, idLivre);
+			
+		}
 		
 	
 	return "livre acheté";
 	}
-	
-
+//	
 	@RequestMapping(value = "/AR/{percent}/{idLivre}",produces = "application/json")
 	public String ajouterreduc(@PathVariable("percent") Integer percent, @PathVariable("idLivre") Integer idLivre)
 	{
@@ -98,17 +123,18 @@ EmailService es;
 	
 	return "reduction acordée , verifiez votre mail";
 	}
-	
-//	@RequestMapping(value = "/getUsers/{idLivre}", produces = "application/json")
-//	public @ResponseBody List<User> findUserByWish(@PathVariable("idLivre") Integer idLivre){
-//   
-//	return	u.utilisateursparSouhait(idLivre);
-//		
-// 
-//}
-//	@RequestMapping(value = "/getUsersbytype/{idLivre}", produces = "application/json")
-//	public @ResponseBody List<User> findUserByauthorandtype(@PathVariable("idLivre") Integer idLivre){
-//   
-//	return	u.utilisteurspargenreetauteur(idLivre);
-//	}
+	@RequestMapping(value = "downloadTestFile", method = RequestMethod.GET)
+	public InputStreamResource FileSystemResource (HttpServletResponse response) throws IOException {
+		response.setContentType("application/pdf");
+		response.setHeader("Content-Disposition", "attachment; filename=\"test.pdf\"");
+		InputStreamResource resource = new InputStreamResource(new BufferedInputStream(new URL("https://www.win.tue.nl/~marko/latex/exercises/day2/snowwhite2.pdf").openStream()));
+		 FileOutputStream fileOutputStream = new FileOutputStream(new File("C:\\Users\\mhayari\\Desktop\\books") );
+//			    byte dataBuffer[] = new byte[1024];
+//			    int bytesRead;
+//			    while ((bytesRead = re.read(dataBuffer, 0, 1024)) != -1) {
+//			        fileOutputStream.write(dataBuffer, 0, bytesRead);
+//			    }
+		return resource;
+	}	
 }
+

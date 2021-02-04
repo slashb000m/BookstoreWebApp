@@ -29,12 +29,25 @@ public class Livre implements Serializable {
 	@Column(name = "id_livre")
 	private int idLivre; 
 	
+	public String getUrl() {
+		return url;
+	}
+
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+
 	private String titre; 
 	private String auteur; 
 	private String categorie;
 	
 	@Column(name="nbr_pages")
 	private int nbrPages; 
+	
+	@Column(name="url")
+	private String url;
 	
 	@Override
 	public String toString() {
