@@ -1,6 +1,7 @@
 package com.esprit.bookstore.repositories;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -20,6 +21,9 @@ public interface ReclamationRepository extends JpaRepository<Reclamation, Intege
 	@Query(value="INSERT INTO reclamation (titre,texte,date_creation,user_reclamation_id) VALUES(:titre,:texte,:dateCreation,:userId)",nativeQuery=true)
 	public void addReclamation
 	(@Param("titre") String titre,@Param("texte") String texte,@Param("dateCreation") Date dateCreation,@Param("userId") int userId);
+	
+	@Query(value="select * from reclamation",nativeQuery=true)
+	public List<Reclamation> getReclamations();
 	
 
 

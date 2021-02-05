@@ -2,6 +2,7 @@ package com.esprit.bookstore.entities;
 
 import java.util.Date;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+
+@JsonIgnoreProperties
 @Entity
 public class Reclamation {
 	
@@ -37,6 +42,7 @@ public class Reclamation {
 	@Temporal(TemporalType.TIME)
     @Column(name="date_creation")
 	private Date dateCreation;
+	
 	
 	@ManyToOne
     @JoinColumn(name="user_reclamation_id")

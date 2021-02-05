@@ -23,6 +23,7 @@ public class Livre {
 	private String titre; 
 	private String auteur; 
 	private String categorie;
+	private String description;
 	
 	@Column(name="nbr_pages")
 	private int nbrPages; 
